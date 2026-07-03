@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import api from '../services/api';
 import { demoLiveTraffic, featureModules } from '../data/trafficDemoData';
 
@@ -23,6 +24,31 @@ const LiveTraffic = () => {
   const [history, setHistory] = useState([64, 68, 72, 70, 73, 71]);
   const [featureSearch, setFeatureSearch] = useState('');
   const [selectedGroup, setSelectedGroup] = useState('All');
+  
+  const location = useLocation();
+
+  // Unique groups for filtering
+  const groups = useMemo(() => {
+    const set = new Set(traffic.featureModules?.map(f => f.group) || []);
+    return ['All', ...Array.from(set)];
+  }, [traffic.featureModules]);
+
+  // Filtered features list
+  const filteredFeatures = useMemo(() => {
+    let items = traffic.featureModules || [];
+    if (selectedGroup !== 'All') {
+      items = items.filter(f => f.group === selectedGroup);
+    }
+    if (featureSearch.trim()) {
+      const query = featureSearch.toLowerCase();
+      items = items.filter(f =>
+        f.name.toLowerCase().includes(query) ||
+        (f.description && f.description.toLowerCase().includes(query)) ||
+        f.group.toLowerCase().includes(query)
+      );
+    }
+    return items;
+  }, [traffic.featureModules, selectedGroup, featureSearch]);
 
   useEffect(() => {
     let alive = true;
@@ -65,6 +91,21 @@ const LiveTraffic = () => {
     };
   }, []);
 
+  // Listen to hash updates and perform smooth scrolling (resolving SPA hash routing problem)
+  useEffect(() => {
+    if (location.hash) {
+      // Small timeout to ensure DOM features are fully rendered before scrolling
+      const timer = setTimeout(() => {
+        const id = location.hash.replace('#', '');
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [location.hash, filteredFeatures]); // Re-trigger when hash changes or features list updates
+
   const selected = useMemo(
     () => traffic.corridors.find((corridor) => corridor.id === selectedCorridor) || traffic.corridors[0],
     [traffic.corridors, selectedCorridor]
@@ -89,29 +130,6 @@ const LiveTraffic = () => {
     const areaPath = points.length ? `${linePath} L ${points[points.length - 1].x} ${height} L ${points[0].x} ${height} Z` : '';
     return { linePath, areaPath };
   }, [history]);
-
-  // Unique groups for filtering
-  const groups = useMemo(() => {
-    const set = new Set(traffic.featureModules?.map(f => f.group) || []);
-    return ['All', ...Array.from(set)];
-  }, [traffic.featureModules]);
-
-  // Filtered features list
-  const filteredFeatures = useMemo(() => {
-    let items = traffic.featureModules || [];
-    if (selectedGroup !== 'All') {
-      items = items.filter(f => f.group === selectedGroup);
-    }
-    if (featureSearch.trim()) {
-      const query = featureSearch.toLowerCase();
-      items = items.filter(f =>
-        f.name.toLowerCase().includes(query) ||
-        (f.description && f.description.toLowerCase().includes(query)) ||
-        f.group.toLowerCase().includes(query)
-      );
-    }
-    return items;
-  }, [traffic.featureModules, selectedGroup, featureSearch]);
 
   return (
     <>
@@ -296,7 +314,7 @@ const LiveTraffic = () => {
         </article>
       </section>
 
-      <section className="section-header" id="features">
+      <section className="section-header" id="features" style={{ scrollMarginTop: '100px' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <h2>30 Feature Modules</h2>
           <p>Filter or search modules across commuter operations, traffic signals, safety, and transit plans.</p>
