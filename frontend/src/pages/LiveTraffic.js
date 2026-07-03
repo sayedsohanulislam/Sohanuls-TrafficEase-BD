@@ -21,6 +21,8 @@ const LiveTraffic = () => {
   const [updatedAt, setUpdatedAt] = useState(new Date());
   const [selectedCorridor, setSelectedCorridor] = useState(demoLiveTraffic.corridors[0].id);
   const [history, setHistory] = useState([64, 68, 72, 70, 73, 71]);
+  const [featureSearch, setFeatureSearch] = useState('');
+  const [selectedGroup, setSelectedGroup] = useState('All');
 
   useEffect(() => {
     let alive = true;
@@ -87,6 +89,29 @@ const LiveTraffic = () => {
     const areaPath = points.length ? `${linePath} L ${points[points.length - 1].x} ${height} L ${points[0].x} ${height} Z` : '';
     return { linePath, areaPath };
   }, [history]);
+
+  // Unique groups for filtering
+  const groups = useMemo(() => {
+    const set = new Set(traffic.featureModules?.map(f => f.group) || []);
+    return ['All', ...Array.from(set)];
+  }, [traffic.featureModules]);
+
+  // Filtered features list
+  const filteredFeatures = useMemo(() => {
+    let items = traffic.featureModules || [];
+    if (selectedGroup !== 'All') {
+      items = items.filter(f => f.group === selectedGroup);
+    }
+    if (featureSearch.trim()) {
+      const query = featureSearch.toLowerCase();
+      items = items.filter(f =>
+        f.name.toLowerCase().includes(query) ||
+        (f.description && f.description.toLowerCase().includes(query)) ||
+        f.group.toLowerCase().includes(query)
+      );
+    }
+    return items;
+  }, [traffic.featureModules, selectedGroup, featureSearch]);
 
   return (
     <>
@@ -272,23 +297,63 @@ const LiveTraffic = () => {
       </section>
 
       <section className="section-header" id="features">
-        <div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <h2>30 Feature Modules</h2>
-          <p>The project now presents a complete traffic platform scope across commuters, authorities, drivers, transit, parking, safety, and analytics.</p>
+          <p>Filter or search modules across commuter operations, traffic signals, safety, and transit plans.</p>
         </div>
       </section>
 
+      {/* Feature Filter Search Bar and Tags */}
+      <div className="panel" style={{ marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <input
+          style={{
+            width: '100%',
+            height: '42px',
+            padding: '0 16px',
+            background: 'rgba(255,255,255,0.02)',
+            border: '1px solid var(--line)',
+            borderRadius: '8px',
+            fontSize: '0.92rem',
+            color: '#fff'
+          }}
+          placeholder="🔍 Search feature name, description or group..."
+          value={featureSearch}
+          onChange={(e) => setFeatureSearch(e.target.value)}
+        />
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          {groups.map(group => (
+            <button
+              key={group}
+              type="button"
+              className={`badge ${selectedGroup === group ? 'success' : ''}`}
+              style={{ cursor: 'pointer', height: '28px', textTransform: 'none' }}
+              onClick={() => setSelectedGroup(group)}
+            >
+              {group}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <section className="feature-grid">
-        {traffic.featureModules.map((feature) => (
+        {filteredFeatures.map((feature) => (
           <article className="feature-card" key={feature.id}>
             <span className="feature-number">{String(feature.id).padStart(2, '0')}</span>
             <div>
               <h3 style={{ color: '#fff' }}>{feature.name}</h3>
               <p style={{ marginTop: '6px' }}>{feature.description || `${feature.group} module for TrafficEase BD.`}</p>
             </div>
-            <span className={`badge ${feature.status === 'Active' ? 'success' : ''}`} style={{ alignSelf: 'flex-start', marginTop: '10px' }}>{feature.status}</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
+              <span className="badge" style={{ background: 'rgba(255,255,255,0.03)', color: 'var(--muted)', border: 'none' }}>{feature.group}</span>
+              <span className={`badge ${feature.status === 'Active' ? 'success' : ''}`}>{feature.status}</span>
+            </div>
           </article>
         ))}
+        {filteredFeatures.length === 0 && (
+          <div style={{ gridColumn: '1 / -1', padding: '40px', textAlign: 'center', color: 'var(--muted)' }}>
+            No feature modules match your query.
+          </div>
+        )}
       </section>
     </>
   );
