@@ -52,21 +52,21 @@ let alerts = [
 ];
 
 let parking = [
-  { _id: 'mock-pk-1', name: 'Banani Multiplex Parking', locationName: 'Kemal Ataturk Ave', totalSpaces: 200, availableSpaces: 45, status: 'Active' },
-  { _id: 'mock-pk-2', name: 'Motijheel City Center Lot', locationName: 'Dilkusha C/A', totalSpaces: 400, availableSpaces: 120, status: 'Active' },
-  { _id: 'mock-pk-3', name: 'Kawran Bazar Market Parking', locationName: 'Kawran Bazar', totalSpaces: 150, availableSpaces: 5, status: 'Active' }
+  { _id: 'mock-pk-1', name: 'Banani Multiplex Parking', address: 'Kemal Ataturk Ave', capacity: 200, availableSpaces: 45, status: 'Open', location: { type: 'Point', coordinates: [90.4003, 23.7937] } },
+  { _id: 'mock-pk-2', name: 'Motijheel City Center Lot', address: 'Dilkusha C/A', capacity: 400, availableSpaces: 120, status: 'Open', location: { type: 'Point', coordinates: [90.4172, 23.7330] } },
+  { _id: 'mock-pk-3', name: 'Kawran Bazar Market Parking', address: 'Kawran Bazar', capacity: 150, availableSpaces: 5, status: 'Open', location: { type: 'Point', coordinates: [90.3900, 23.7500] } }
 ];
 
 let signals = [
-  { _id: 'mock-sig-1', intersection: 'Shahbagh Circle', locationName: 'Kazi Nazrul Islam Avenue', currentPhase: 'North-South Green', secondsLeft: 38, mode: 'Manual support', status: 'Active' },
-  { _id: 'mock-sig-2', intersection: 'Farmgate Crossing', locationName: 'Mirpur Road', currentPhase: 'East-West Green', secondsLeft: 24, mode: 'Adaptive', status: 'Active' },
-  { _id: 'mock-sig-3', intersection: 'Banani Road 11', locationName: 'Banani', currentPhase: 'Pedestrian crossing', secondsLeft: 16, mode: 'Balanced', status: 'Active' }
+  { _id: 'mock-sig-1', intersection: 'Shahbagh Circle', status: 'Manual', congestionLevel: 'High', cycleSeconds: 90, location: { type: 'Point', coordinates: [90.3951, 23.7382] } },
+  { _id: 'mock-sig-2', intersection: 'Farmgate Crossing', status: 'Adaptive', congestionLevel: 'High', cycleSeconds: 120, location: { type: 'Point', coordinates: [90.3897, 23.7561] } },
+  { _id: 'mock-sig-3', intersection: 'Banani Road 11', status: 'Normal', congestionLevel: 'Medium', cycleSeconds: 60, location: { type: 'Point', coordinates: [90.4003, 23.7937] } }
 ];
 
 let transit = [
-  { _id: 'mock-tr-1', name: 'Mirpur Link 10', type: 'Bus', routeCode: 'ML-10', status: 'Active', headwayMinutes: 9, crowdingLevel: 'High' },
-  { _id: 'mock-tr-2', name: 'Airport Express', type: 'Bus', routeCode: 'AE-01', status: 'Active', headwayMinutes: 13, crowdingLevel: 'Medium' },
-  { _id: 'mock-tr-3', name: 'MRT Line 6 Feeder', type: 'Feeder', routeCode: 'MRT-F1', status: 'Active', headwayMinutes: 7, crowdingLevel: 'High' }
+  { _id: 'mock-tr-1', name: 'Mirpur Link 10', mode: 'Bus', origin: 'Mirpur 10', destination: 'Motijheel', status: 'Active', headwayMinutes: 9, crowdingLevel: 'High' },
+  { _id: 'mock-tr-2', name: 'Airport Express', mode: 'Bus', origin: 'Uttara', destination: 'Gulistan', status: 'Active', headwayMinutes: 13, crowdingLevel: 'Medium' },
+  { _id: 'mock-tr-3', name: 'MRT Line 6 Feeder', mode: 'Metro', origin: 'Uttara North', destination: 'Motijheel', status: 'Active', headwayMinutes: 7, crowdingLevel: 'High' }
 ];
 
 // Helper to get summaries
