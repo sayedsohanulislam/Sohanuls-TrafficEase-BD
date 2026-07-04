@@ -1236,4 +1236,165 @@ p {
   line-height: 1.5;
 }
 
+/* ==========================================================================
+   MOBILE & RESPONSIVE DESIGN STYLES (CSE470 Award Winning UI Patch)
+   ========================================================================== */
+
+/* Hamburger Navigation Toggle button (Desktop Hidden) */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 20px;
+  background: transparent;
+  cursor: pointer;
+  z-index: 1100;
+  border: none;
+  outline: none;
+  padding: 0;
+}
+
+.nav-toggle .bar {
+  width: 100%;
+  height: 2px;
+  background-color: #fff;
+  border-radius: 2px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Hamburger animations when active */
+.nav-toggle.active .bar:nth-child(1) {
+  transform: translateY(9px) rotate(45deg);
+  background-color: var(--primary);
+}
+
+.nav-toggle.active .bar:nth-child(2) {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.nav-toggle.active .bar:nth-child(3) {
+  transform: translateY(-9px) rotate(-45deg);
+  background-color: var(--primary);
+}
+
+/* Mobile responsive menu */
+@media (max-width: 768px) {
+  .nav-toggle {
+    display: flex;
+  }
+
+  .nav-links {
+    position: absolute;
+    top: 75px;
+    left: 0;
+    width: 100%;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    flex-direction: column;
+    align-items: stretch;
+    background: rgba(4, 8, 6, 0.98);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, visibility 0.3s ease;
+    padding: 0 24px;
+    gap: 0;
+  }
+
+  .nav-links.open {
+    max-height: 480px;
+    opacity: 1;
+    visibility: visible;
+    padding: 16px 24px 24px;
+  }
+
+  .nav-link {
+    height: 46px;
+    width: 100%;
+    justify-content: flex-start;
+    padding: 0 12px;
+    border-radius: 8px;
+    border-bottom: none !important;
+  }
+
+  .nav-link:hover, .nav-link.active {
+    background: var(--surface-soft);
+    box-shadow: none;
+  }
+
+  .nav-auth-mobile {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    margin-top: 8px;
+    padding-top: 12px;
+  }
+
+  .nav-action {
+    width: 100%;
+    justify-content: center;
+    margin-top: 8px;
+  }
+
+  /* Grid layouts collapse to single column */
+  .grid-2, .grid-3, .grid-4 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Dashboard and Incident views double-columns collapse */
+  .ops-grid, .form-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px;
+  }
+
+  .detail-panel {
+    margin-top: 0 !important;
+  }
+
+  /* Responsive maps spacing */
+  .map-frame {
+    height: 320px !important;
+  }
+
+  /* Compact headings */
+  .hero h1 {
+    font-size: 2.2rem;
+  }
+
+  .hero-main {
+    padding: 24px;
+    min-height: auto;
+  }
+}
+
+@media (max-width: 600px) {
+  /* Full screen command drawer on very small devices */
+  .workspace-drawer {
+    max-width: 100% !important;
+  }
+
+  .workspace-header, .workspace-body {
+    padding: 16px;
+  }
+
+  /* Scrollable tables container to avoid viewport breakages */
+  table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Stats cards spacing */
+  .stat-tile strong {
+    font-size: 1.8rem;
+  }
+}
+
+
 
