@@ -222,3 +222,27 @@ To comply with the syllabus guidelines, the platform does not count Login/Regist
 All modules have been verified for syntax correctness, code standards adherence, and build optimizations:
 * **Backend build verification:** Tested via mock database seeds.
 * **Frontend build verification:** Checked using `npm run build` which successfully outputs optimized files.
+
+---
+
+## 8. Sprint 1 Deliverables: Commuter & Navigation Features (Sayed Sohanul Islam)
+
+Below are the descriptions and visual verifications of the completed features for Sprint 1:
+
+### 8.1 Google Maps Traffic Overlay & Nominatim Geocoding Search Engine
+- **Description**: Real-time traffic pressure overlay showing green/orange/red lines directly in the Leaflet map layer, along with the Nominatim geocoding engine to search, autocomplete, and pan the map to any location in Dhaka.
+- **Verification Screenshot**:
+  ![Live Traffic Map & Search Engine](live_map_screenshot.png)
+
+### 8.2 Click-to-Pin Incident Picker
+- **Description**: Allows commuters to click directly on the interactive map to pin coordinates dynamically when reporting an incident, resolving the need to enter coordinates manually.
+- **Verification Details**: Integrated directly into the `/report-incident` page with Leaflet click events mapping coordinates to form inputs.
+
+### 8.3 Multimodal Travel Duration & ETA Estimator
+- **Description**: Compares estimated travel duration for Private Car, MRT (metro), and Public Bus transit modes dynamically as distance sliders are adjusted.
+- **Verification Details**: Implemented inside the Operations Simulator workspace (Feature 26) with automated travel calculations.
+
+### 8.4 Weather & Flood Sensor Risk Estimators
+- **Description**: Simulates rain intensity and waterlogging depth changes to calculate live road safety warning scores and issue vehicle-specific clearance alerts.
+- **Verification Details**: Interactive sliders inside the Operations Simulator workspace (Features 11 and 12) calculate risk values dynamically.
+
