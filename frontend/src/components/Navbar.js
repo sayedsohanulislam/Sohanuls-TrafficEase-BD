@@ -42,6 +42,7 @@ const Navbar = () => {
           <NavLink className="nav-link" to="/dashboard" onClick={() => setMenuOpen(false)}>Dashboard</NavLink>
           <NavLink className="nav-link" to="/live-traffic" onClick={() => setMenuOpen(false)}>Live Traffic</NavLink>
           <NavLink className="nav-link" to="/live-map" onClick={() => setMenuOpen(false)}>Map</NavLink>
+          <NavLink className="nav-link" to="/smart-hub" onClick={() => setMenuOpen(false)}>Smart Hub</NavLink>
           <NavLink className="nav-link" to="/report-incident" onClick={() => setMenuOpen(false)}>Report</NavLink>
           {isAuthenticated ? (
             <div className="nav-auth-mobile">

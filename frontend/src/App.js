@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard';
 import LiveTraffic from './pages/LiveTraffic';
 import LiveMap from './pages/LiveMap';
 import ReportIncident from './pages/ReportIncident';
+import SmartHub from './pages/SmartHub';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
               <Route path="/live-traffic" element={<LiveTraffic />} />
               <Route path="/live-map" element={<LiveMap />} />
               <Route path="/report-incident" element={<ReportIncident />} />
+              <Route path="/smart-hub" element={<SmartHub />} />
             </Routes>
           </main>
         </div>
