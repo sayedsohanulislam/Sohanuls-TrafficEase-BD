@@ -18,17 +18,14 @@ This guide outlines the steps required to configure a **persistent MongoDB cloud
 3. **Configure Database Access (Security):**
    - **Database User:** Create a user with a username (e.g., `trafficease_admin`) and a secure password. *Write down these credentials.*
    - **Network Access:** Under the **Network Access** menu, click **Add IP Address** and select **Allow Access from Anywhere** (`0.0.0.0/0`). This is required because Vercel Serverless Functions execute from dynamic, changing IP pools.
-4. **Get the Connection Connection URI:**
+4. **Get the Connection URI:**
    - Go to the Database Deployment panel and click **Connect**.
    - Select **Drivers** (Node.js).
-   - Copy the provided connection string. It will look like this:
+   - Copy the connection string provided by Atlas. Keep the complete value private and store it only in your local `.env` file or hosting provider's encrypted environment settings:
      ```text
-     mongodb+srv://trafficease_admin:<db_password>@cluster0.abcde.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+     MONGODB_URI="<paste the private Atlas connection string here>"
      ```
-   - Replace `<db_password>` with the password you created for your database user, and append a database name (e.g., `trafficease_db`) before the query parameters:
-     ```text
-     mongodb+srv://trafficease_admin:YOUR_PASSWORD_HERE@cluster0.abcde.mongodb.net/trafficease_db?retryWrites=true&w=majority
-     ```
+   - Select `trafficease_db` as the database name when configuring the URI. Never commit the completed URI to source control.
 
 ---
 
