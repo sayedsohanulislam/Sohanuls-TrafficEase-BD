@@ -11,18 +11,51 @@ import { divisionPulse, liveAlerts, locations, nationalMetrics, transportStatus 
 
 const metricIcons = { road: Navigation, alert: AlertTriangle, train: TrainFront, air: Wind };
 const alertIcons = { Weather: CloudRain, Traffic: Navigation, Transport: BusFront, Utilities: UtilityPole };
+const weatherLabels = { 0: 'Clear sky', 1: 'Mostly clear', 2: 'Partly cloudy', 3: 'Overcast', 45: 'Foggy', 48: 'Foggy', 51: 'Light drizzle', 53: 'Drizzle', 55: 'Heavy drizzle', 61: 'Light rain', 63: 'Rain', 65: 'Heavy rain', 80: 'Rain showers', 81: 'Rain showers', 82: 'Heavy showers', 95: 'Thunderstorms', 96: 'Thunderstorms', 99: 'Thunderstorms' };
 
 const Home = () => {
   const [location, setLocation] = useState('Dhaka');
   const [alertFilter, setAlertFilter] = useState('All');
   const [bannerVisible, setBannerVisible] = useState(true);
   const [clock, setClock] = useState(new Date());
-  const current = locations[location];
+  const [liveConditions, setLiveConditions] = useState(locations.Dhaka);
+  const current = { ...locations[location], ...liveConditions };
 
   useEffect(() => {
     const timer = window.setInterval(() => setClock(new Date()), 30000);
     return () => window.clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    const selected = locations[location];
+    setLiveConditions(selected);
+    const controller = new AbortController();
+    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${selected.lat}&longitude=${selected.lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&hourly=precipitation_probability&forecast_days=1&timezone=Asia%2FDhaka`;
+    const airUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${selected.lat}&longitude=${selected.lon}&current=us_aqi&timezone=Asia%2FDhaka`;
+
+    Promise.all([fetch(weatherUrl, { signal: controller.signal }), fetch(airUrl, { signal: controller.signal })])
+      .then(async ([weatherResponse, airResponse]) => {
+        if (!weatherResponse.ok || !airResponse.ok) throw new Error('Live conditions unavailable');
+        return Promise.all([weatherResponse.json(), airResponse.json()]);
+      })
+      .then(([weather, air]) => {
+        const code = weather.current.weather_code;
+        const accent = code >= 95 ? 'storm' : code >= 51 ? 'rain' : code <= 1 ? 'sun' : 'cloud';
+        setLiveConditions({
+          temp: Math.round(weather.current.temperature_2m),
+          feels: Math.round(weather.current.apparent_temperature),
+          condition: weatherLabels[code] || 'Current conditions',
+          humidity: weather.current.relative_humidity_2m,
+          wind: Math.round(weather.current.wind_speed_10m),
+          rain: weather.hourly?.precipitation_probability?.[0] ?? selected.rain,
+          aqi: Math.round(air.current.us_aqi),
+          accent
+        });
+      })
+      .catch((error) => { if (error.name !== 'AbortError') setLiveConditions(selected); });
+
+    return () => controller.abort();
+  }, [location]);
 
   const filteredAlerts = useMemo(
     () => alertFilter === 'All' ? liveAlerts : liveAlerts.filter((alert) => alert.type === alertFilter),

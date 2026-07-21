@@ -1,12 +1,12 @@
 export const locations = {
-  Dhaka: { temp: 31, feels: 36, condition: 'Partly cloudy', humidity: 72, wind: 11, rain: 38, aqi: 118, traffic: 'Heavy', accent: 'warning' },
-  Chattogram: { temp: 29, feels: 34, condition: 'Light rain', humidity: 81, wind: 18, rain: 68, aqi: 72, traffic: 'Moderate', accent: 'rain' },
-  Sylhet: { temp: 28, feels: 33, condition: 'Rain showers', humidity: 86, wind: 9, rain: 76, aqi: 54, traffic: 'Light', accent: 'rain' },
-  Rajshahi: { temp: 33, feels: 38, condition: 'Mostly sunny', humidity: 61, wind: 8, rain: 12, aqi: 91, traffic: 'Moderate', accent: 'sun' },
-  Khulna: { temp: 30, feels: 35, condition: 'Cloudy', humidity: 79, wind: 15, rain: 46, aqi: 64, traffic: 'Light', accent: 'cloud' },
-  Barishal: { temp: 29, feels: 34, condition: 'Thunderstorms', humidity: 84, wind: 19, rain: 82, aqi: 48, traffic: 'Light', accent: 'storm' },
-  Rangpur: { temp: 28, feels: 31, condition: 'Overcast', humidity: 75, wind: 7, rain: 51, aqi: 59, traffic: 'Moderate', accent: 'cloud' },
-  Mymensingh: { temp: 30, feels: 35, condition: 'Partly cloudy', humidity: 74, wind: 10, rain: 34, aqi: 78, traffic: 'Moderate', accent: 'cloud' }
+  Dhaka: { lat: 23.81, lon: 90.41, temp: 31, feels: 36, condition: 'Partly cloudy', humidity: 72, wind: 11, rain: 38, aqi: 118, traffic: 'Heavy', accent: 'warning' },
+  Chattogram: { lat: 22.36, lon: 91.78, temp: 29, feels: 34, condition: 'Light rain', humidity: 81, wind: 18, rain: 68, aqi: 72, traffic: 'Moderate', accent: 'rain' },
+  Sylhet: { lat: 24.89, lon: 91.87, temp: 28, feels: 33, condition: 'Rain showers', humidity: 86, wind: 9, rain: 76, aqi: 54, traffic: 'Light', accent: 'rain' },
+  Rajshahi: { lat: 24.37, lon: 88.60, temp: 33, feels: 38, condition: 'Mostly sunny', humidity: 61, wind: 8, rain: 12, aqi: 91, traffic: 'Moderate', accent: 'sun' },
+  Khulna: { lat: 22.85, lon: 89.54, temp: 30, feels: 35, condition: 'Cloudy', humidity: 79, wind: 15, rain: 46, aqi: 64, traffic: 'Light', accent: 'cloud' },
+  Barishal: { lat: 22.70, lon: 90.35, temp: 29, feels: 34, condition: 'Thunderstorms', humidity: 84, wind: 19, rain: 82, aqi: 48, traffic: 'Light', accent: 'storm' },
+  Rangpur: { lat: 25.74, lon: 89.28, temp: 28, feels: 31, condition: 'Overcast', humidity: 75, wind: 7, rain: 51, aqi: 59, traffic: 'Moderate', accent: 'cloud' },
+  Mymensingh: { lat: 24.75, lon: 90.41, temp: 30, feels: 35, condition: 'Partly cloudy', humidity: 74, wind: 10, rain: 34, aqi: 78, traffic: 'Moderate', accent: 'cloud' }
 };
 
 export const liveAlerts = [

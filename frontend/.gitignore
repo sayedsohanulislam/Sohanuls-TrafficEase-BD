@@ -2,5 +2,6 @@ node_modules/
 build/
 dist/
 *.tar.gz
+*.log
 .env
 .env.local
