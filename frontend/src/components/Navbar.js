@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
-import { Bell, ChevronDown, MapPinned, Menu, Search, X } from 'lucide-react';
+import { Bell, Boxes, Gauge, MapPinned, Menu, Navigation, Route, Search, TrafficCone, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
@@ -8,6 +8,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const navClass = ({ isActive }) => `nav-link${isActive ? ' active' : ''}`;
 
   const handleLogout = () => {
     logout();
@@ -42,11 +43,12 @@ const Navbar = () => {
         </button>
 
         <nav className={`nav-links ${menuOpen ? 'open' : ''}`} aria-label="Main navigation">
-          <NavLink className="nav-link" to="/" onClick={() => setMenuOpen(false)}>Overview</NavLink>
-          <NavLink className="nav-link" to="/live-traffic" onClick={() => setMenuOpen(false)}>Traffic</NavLink>
-          <NavLink className="nav-link" to="/live-map" onClick={() => setMenuOpen(false)}>Live map</NavLink>
-          <NavLink className="nav-link nav-services-link" to="/smart-hub" onClick={() => setMenuOpen(false)}>Services <ChevronDown size={14} /></NavLink>
-          <NavLink className="nav-link" to="/dashboard" onClick={() => setMenuOpen(false)}>My area</NavLink>
+          <NavLink className={navClass} to="/" end onClick={() => setMenuOpen(false)}><Gauge size={15} />Overview</NavLink>
+          <NavLink className={navClass} to="/traffic" onClick={() => setMenuOpen(false)}><TrafficCone size={15} />Traffic</NavLink>
+          <NavLink className={navClass} to="/telemetry" onClick={() => setMenuOpen(false)}><ActivityIcon />Telemetry</NavLink>
+          <NavLink className={navClass} to="/routing" onClick={() => setMenuOpen(false)}><Route size={15} />Routing</NavLink>
+          <NavLink className={navClass} to="/smart-hub" onClick={() => setMenuOpen(false)}><Boxes size={15} />Smart hub</NavLink>
+          <NavLink className={navClass} to="/live-map" onClick={() => setMenuOpen(false)}><Navigation size={15} />Map</NavLink>
         </nav>
 
         <div className="nav-tools">
@@ -68,5 +70,7 @@ const Navbar = () => {
     </header>
   );
 };
+
+const ActivityIcon = () => <span className="telemetry-nav-icon" aria-hidden="true"><i /><i /><i /></span>;
 
 export default Navbar;

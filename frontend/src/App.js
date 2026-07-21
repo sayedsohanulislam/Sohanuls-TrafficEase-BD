@@ -10,6 +10,8 @@ import LiveTraffic from './pages/LiveTraffic';
 import LiveMap from './pages/LiveMap';
 import ReportIncident from './pages/ReportIncident';
 import SmartHub from './pages/SmartHub';
+import Telemetry from './pages/Telemetry';
+import Routing from './pages/Routing';
 
 function App() {
   return (
@@ -23,7 +25,10 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/traffic" element={<LiveTraffic />} />
               <Route path="/live-traffic" element={<LiveTraffic />} />
+              <Route path="/telemetry" element={<Telemetry />} />
+              <Route path="/routing" element={<Routing />} />
               <Route path="/live-map" element={<LiveMap />} />
               <Route path="/report-incident" element={<ReportIncident />} />
               <Route path="/smart-hub" element={<SmartHub />} />

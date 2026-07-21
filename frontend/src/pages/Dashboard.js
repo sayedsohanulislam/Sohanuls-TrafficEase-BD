@@ -1,252 +1,69 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import api from '../services/api';
-import { demoLiveTraffic } from '../data/trafficDemoData';
-
-const initialState = {
-  summary: null,
-  incidents: [],
-  vehicles: [],
-  alerts: [],
-  parking: [],
-  traffic: demoLiveTraffic
-};
+import {
+  ArrowRight, Bell, Bookmark, ChevronRight, CloudRain, CloudSun, Gauge,
+  HeartPulse, MapPin, Navigation, Settings2, ShieldCheck, TrainFront,
+  TrafficCone, Wind
+} from 'lucide-react';
+import { liveAlerts, locations } from '../data/nationalLiveData';
 
 const Dashboard = () => {
-  const [data, setData] = useState(initialState);
-  const [loading, setLoading] = useState(true);
+  const [area, setArea] = useState('Dhaka');
+  const [preferences, setPreferences] = useState({ traffic: true, weather: true, utilities: false, transport: true });
+  const current = locations[area];
 
-  const loadData = () => {
-    Promise.allSettled([
-      api.get('/summary'),
-      api.get('/incidents?limit=6'),
-      api.get('/vehicles?limit=6'),
-      api.get('/alerts?active=true'),
-      api.get('/parking'),
-      api.get('/live-traffic')
-    ]).then((results) => {
-      setData({
-        summary: results[0].value?.data || null,
-        incidents: results[1].value?.data?.items || [],
-        vehicles: results[2].value?.data?.items || [],
-        alerts: results[3].value?.data?.items || [],
-        parking: results[4].value?.data?.items || [],
-        traffic: results[5].value?.data || demoLiveTraffic
-      });
-    }).finally(() => setLoading(false));
-  };
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const handleUpdateStatus = async (id, status) => {
-    try {
-      await api.put(`/incidents/${id}`, { status });
-      loadData();
-    } catch (err) {
-      console.error("Failed to update status:", err);
-    }
-  };
-
-  const handleDeleteIncident = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this incident report?")) return;
-    try {
-      await api.delete(`/incidents/${id}`);
-      loadData();
-    } catch (err) {
-      console.error("Failed to delete incident:", err);
-    }
-  };
-
-  const summary = data.summary || {
-    incidents: data.incidents.length,
-    vehicles: data.vehicles.length,
-    activeAlerts: data.alerts.length,
-    parkingSpaces: data.parking.reduce((sum, item) => sum + Number(item.availableSpaces || 0), 0)
-  };
+  const togglePreference = (key) => setPreferences((values) => ({ ...values, [key]: !values[key] }));
 
   return (
-    <>
-      <div className="section-header">
-        <div>
-          <h1>Operations Dashboard</h1>
-          <p>Real-time analytics and incident response coordination board.</p>
-        </div>
-      </div>
+    <div className="service-page my-area-page">
+      <header className="service-masthead">
+        <div><div className="service-breadcrumb"><span>Personal</span><ChevronRight size={13} /><b>My area</b></div><div className="service-title-row"><div className="service-title-icon area"><MapPin /></div><div><h1>My area</h1><p>A simple daily briefing for the places and services you care about.</p></div></div></div>
+        <div className="masthead-actions"><label className="area-selector"><MapPin size={16} /><select value={area} onChange={(event) => setArea(event.target.value)}>{Object.keys(locations).map((location) => <option key={location}>{location}</option>)}</select></label><button className="surface-button"><Settings2 size={17} />Preferences</button></div>
+      </header>
 
-      <section className="grid grid-4" style={{ marginBottom: '24px' }}>
-        <article className="stat-tile">
-          <span>Open Incidents</span>
-          <strong>{summary.incidents}</strong>
-          <p>Active traffic emergencies</p>
-        </article>
-        <article className="stat-tile">
-          <span>Tracked Vehicles</span>
-          <strong>{summary.vehicles}</strong>
-          <p>Emergency fleet units online</p>
-        </article>
-        <article className="stat-tile">
-          <span>Active Alerts</span>
-          <strong>{summary.activeAlerts}</strong>
-          <p>Public broadcasts active</p>
-        </article>
-        <article className="stat-tile">
-          <span>Traffic Load</span>
-          <strong>{data.traffic.averageCongestion}%</strong>
-          <p>Dhaka network pressure</p>
-        </article>
+      <section className="area-welcome-card">
+        <div><span>Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening'}</span><h2>Here’s what’s happening in {area}.</h2><p>Your most important weather, mobility and public-service updates are summarized below.</p></div>
+        <div className="area-weather"><CloudSun size={45} /><strong>{current.temp}°</strong><span>{current.condition}<small>Feels like {current.feels}°</small></span></div>
       </section>
 
-      <section className="ops-grid dashboard-ops" style={{ marginBottom: '32px' }}>
-        <article className="card dense-card">
-          <h2 style={{ fontSize: '1.15rem', marginBottom: '16px', borderBottom: '1px solid var(--line)', paddingBottom: '8px' }}>Live Corridor Watch</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {data.traffic.corridors.slice(0, 5).map((corridor) => (
-              <div className="mini-row" key={corridor.id}>
-                <div>
-                  <strong>{corridor.name}</strong>
-                  <span>{corridor.cause}</span>
-                </div>
-                <span className={`badge ${corridor.congestion > 80 ? 'danger' : 'warning'}`}>{corridor.congestion}%</span>
-                <div className="progress-track" style={{ gridColumn: '1 / -1', marginTop: '6px' }}><span style={{ width: `${corridor.congestion}%` }} /></div>
-              </div>
-            ))}
+      <section className="service-metric-grid">
+        <article><div className="service-metric-icon warning"><TrafficCone /></div><div><span>Traffic</span><strong>{current.traffic}</strong><small>check before leaving</small></div></article>
+        <article><div className="service-metric-icon info"><Wind /></div><div><span>Air quality</span><strong>AQI {current.aqi}</strong><small>{current.aqi > 100 ? 'sensitive groups take care' : 'acceptable conditions'}</small></div></article>
+        <article><div className="service-metric-icon info"><CloudRain /></div><div><span>Rain chance</span><strong>{current.rain}%</strong><small>during the next few hours</small></div></article>
+        <article><div className="service-metric-icon critical"><Bell /></div><div><span>Nearby alerts</span><strong>2</strong><small>one needs attention</small></div></article>
+      </section>
+
+      <section className="my-area-grid">
+        <article className="workspace-panel area-briefing-panel">
+          <div className="workspace-panel-header"><div><span>Daily brief</span><h2>What you should know</h2></div><span className="status-chip good">Updated now</span></div>
+          <div className="area-brief-list">
+            <div><div className="brief-icon traffic"><Navigation /></div><div><span>Travel</span><h3>Allow 20 extra minutes toward central {area}</h3><p>Peak traffic is building on two major corridors. The smart route avoids the slowest section.</p><Link to="/routing">Plan the journey <ArrowRight size={14} /></Link></div></div>
+            <div><div className="brief-icon weather"><CloudRain /></div><div><span>Weather</span><h3>{current.rain > 60 ? 'Rain is likely later today' : 'No severe weather expected'}</h3><p>Humidity is {current.humidity}% with winds near {current.wind} km/h.</p><Link to="/">Full forecast <ArrowRight size={14} /></Link></div></div>
+            <div><div className="brief-icon transport"><TrainFront /></div><div><span>Public transport</span><h3>Major services are operating normally</h3><p>Metro service is on time; seven national rail services have minor delays.</p><Link to="/smart-hub">Transport services <ArrowRight size={14} /></Link></div></div>
           </div>
         </article>
 
-        <article className="card dense-card">
-          <h2 style={{ fontSize: '1.15rem', marginBottom: '16px', borderBottom: '1px solid var(--line)', paddingBottom: '8px' }}>Authority Actions</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {data.traffic.dispatchQueue.map((task) => (
-              <div className="mini-row" key={task.task}>
-                <div>
-                  <strong>{task.task}</strong>
-                  <span>{task.owner}</span>
-                </div>
-                <span className={`badge ${task.priority === 'Critical' ? 'danger' : 'warning'}`}>{task.etaMin} min</span>
-              </div>
-            ))}
-          </div>
+        <aside className="workspace-panel area-alert-panel">
+          <div className="workspace-panel-header"><div><span>For your location</span><h2>Relevant alerts</h2></div><Bell size={18} /></div>
+          <div className="area-alert-list">{liveAlerts.slice(0,3).map((alert) => <article key={alert.id}><span className={`event-dot ${alert.level}`} /><div><span>{alert.type} · {alert.time}</span><h3>{alert.title}</h3><p>{alert.detail}</p></div></article>)}</div>
+          <button className="panel-footer-link">View all alerts <ArrowRight size={14} /></button>
+        </aside>
+      </section>
+
+      <section className="my-area-bottom-grid">
+        <article className="workspace-panel saved-services-panel">
+          <div className="workspace-panel-header"><div><span>Quick access</span><h2>Saved services</h2></div><Bookmark size={18} /></div>
+          <div className="saved-service-list"><Link to="/traffic"><TrafficCone /><span><strong>Live traffic</strong><small>Heavy in {area}</small></span><ChevronRight /></Link><Link to="/routing"><Navigation /><span><strong>Smart routing</strong><small>Plan with current conditions</small></span><ChevronRight /></Link><Link to="/smart-hub"><HeartPulse /><span><strong>Health services</strong><small>Verified national directory</small></span><ChevronRight /></Link></div>
+        </article>
+
+        <article className="workspace-panel alert-preferences-panel">
+          <div className="workspace-panel-header"><div><span>Notifications</span><h2>Alert preferences</h2></div><Settings2 size={18} /></div>
+          <div className="preference-list">{Object.entries(preferences).map(([key, enabled]) => <label key={key}><span><strong>{key[0].toUpperCase() + key.slice(1)}</strong><small>{enabled ? 'Important updates enabled' : 'Updates are paused'}</small></span><input type="checkbox" checked={enabled} onChange={() => togglePreference(key)} /><i /></label>)}</div>
         </article>
       </section>
 
-      <section className="section-header" style={{ margin: '20px 0 16px' }}>
-        <div>
-          <h2>Recent Incidents</h2>
-          <p>{loading ? 'Loading command logs...' : 'Commuter-reported incidents and field operations feedback.'}</p>
-        </div>
-      </section>
-
-      <div className="table-wrap">
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Type</th>
-              <th>Severity</th>
-              <th>Status</th>
-              <th>Location</th>
-              <th style={{ width: '280px' }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.incidents.map((incident) => (
-              <tr key={incident._id}>
-                <td style={{ fontWeight: '600', color: '#fff' }}>{incident.title}</td>
-                <td>{incident.type}</td>
-                <td>
-                  <span className={`badge ${incident.severity === 'High' || incident.severity === 'Critical' ? 'danger' : incident.severity === 'Medium' ? 'warning' : 'success'}`}>
-                    {incident.severity}
-                  </span>
-                </td>
-                <td>
-                  <span className="badge" style={{ background: 'rgba(255, 255, 255, 0.05)', color: '#fff' }}>
-                    {incident.status}
-                  </span>
-                </td>
-                <td>{incident.locationName}</td>
-                <td>
-                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                    <Link
-                      to="/live-map"
-                      state={{ focusCoordinates: incident.coordinates || incident.location?.coordinates }}
-                      className="badge success"
-                      style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center' }}
-                    >
-                      Locate
-                    </Link>
-                    {incident.status !== 'Resolved' && (
-                      <button
-                        type="button"
-                        onClick={() => handleUpdateStatus(incident._id, 'Resolved')}
-                        className="badge"
-                        style={{ cursor: 'pointer', background: 'rgba(47, 191, 113, 0.1)', color: '#2fbf71', border: '1px solid rgba(47, 191, 113, 0.2)' }}
-                      >
-                        Resolve
-                      </button>
-                    )}
-                    {incident.status === 'Open' && (
-                      <button
-                        type="button"
-                        onClick={() => handleUpdateStatus(incident._id, 'Investigating')}
-                        className="badge"
-                        style={{ cursor: 'pointer', background: 'rgba(255, 176, 32, 0.1)', color: '#ffb020', border: '1px solid rgba(255, 176, 32, 0.2)' }}
-                      >
-                        Investigate
-                      </button>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteIncident(incident._id)}
-                      className="badge danger"
-                      style={{ cursor: 'pointer' }}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {!data.incidents.length && <div className="empty" style={{ padding: '24px', textAlign: 'center', color: 'var(--muted)' }}>No incidents logged in the system.</div>}
-      </div>
-
-      <section className="grid grid-2" style={{ marginTop: '32px' }}>
-        <article className="card">
-          <h2 style={{ fontSize: '1.15rem', marginBottom: '16px', borderBottom: '1px solid var(--line)', paddingBottom: '8px' }}>Active Alerts</h2>
-          <div className="status-list">
-            {data.alerts.map((alert) => (
-              <div className="status-item" key={alert._id}>
-                <div>
-                  <strong>{alert.title}</strong>
-                  <span>{alert.area} - {alert.message}</span>
-                </div>
-                <span className="badge danger" style={{ whiteSpace: 'nowrap' }}>{alert.severity}</span>
-              </div>
-            ))}
-            {!data.alerts.length && <p style={{ color: 'var(--muted)' }}>No active broadcast alerts.</p>}
-          </div>
-        </article>
-
-        <article className="card">
-          <h2 style={{ fontSize: '1.15rem', marginBottom: '16px', borderBottom: '1px solid var(--line)', paddingBottom: '8px' }}>Fleet Snapshot</h2>
-          <div className="status-list">
-            {data.vehicles.map((vehicle) => (
-              <div className="status-item" key={vehicle._id}>
-                <div>
-                  <strong>{vehicle.vehicleNumber}</strong>
-                  <span>{vehicle.type} - Driver: {vehicle.driverName || 'N/A'}</span>
-                </div>
-                <span className="badge success">{vehicle.status}</span>
-              </div>
-            ))}
-            {!data.vehicles.length && <p style={{ color: 'var(--muted)' }}>No fleet vehicles active.</p>}
-          </div>
-        </article>
-      </section>
-    </>
+      <section className="service-crosslink"><div className="service-crosslink-icon"><ShieldCheck /></div><div><span>Your information</span><h2>Preferences are stored on this device and can be changed anytime.</h2></div><Link to="/smart-hub">Explore services <ArrowRight size={16} /></Link></section>
+    </div>
   );
 };
 
